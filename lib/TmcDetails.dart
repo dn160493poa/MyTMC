@@ -3,17 +3,19 @@ import 'User.dart';
 
 class TmcDetails extends StatefulWidget {
 
-  //StartScreen({Key key, this.title}) : super(key: key);
-  //final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<TmcDetails> {
+  int itemId;
 
   @override
   Widget build(BuildContext context) {
+    final RouteSettings settings = ModalRoute.of(context).settings;
+    itemId = settings.arguments;
+    print(itemId);
+    details = getItemsList(itemId); //todo
     return Scaffold(
       appBar: AppBar(
         title: Text('Компбютер, АСУС 4 ядра, 12 ГБ оперативной памяти...'),

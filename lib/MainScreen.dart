@@ -22,7 +22,7 @@ class _MainPageState extends State<MainScreen>{
 
   @override
   Widget build(BuildContext context) {
-    RouteSettings settings = ModalRoute.of(context).settings;
+    final RouteSettings settings = ModalRoute.of(context).settings;
     userId = settings.arguments;
     items = getItemsList(userId);
     return Scaffold(
@@ -55,7 +55,7 @@ class _MainPageState extends State<MainScreen>{
         ),
         body: FutureBuilder<ItemsList>(
             future: items,
-            builder: (context, snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<ItemsList> snapshot) {
               if (snapshot.hasData) {
                 return _myListViewDynamic(snapshot.data.items);
               } else if(snapshot.hasError){
@@ -94,7 +94,8 @@ ListView _myListViewDynamic(items){
             ),
             trailing: Icon(Icons.keyboard_arrow_right),
             onTap: (){
-              Navigator.push(context, new MaterialPageRoute(builder: (context) => new TmcDetails()));
+              //Navigator.push(context, new MaterialPageRoute(builder: (context) => new TmcDetails()));
+              Navigator.popAndPushNamed(context, '/tmcDetails', arguments: items[index].item_id);
             },
           ),
         );
@@ -120,13 +121,15 @@ class ItemsList {
 class Item{
     final String name;
     final String item_name;
+    final int item_id;
 
-    Item({this.name, this.item_name});
+    Item({this.name, this.item_name, this.item_id});
 
     factory Item.fromJson(Map<String, dynamic> json){
       return Item(
         name: json['name'] as String,
-        item_name: json['item_name'] as String
+        item_name: json['item_name'] as String,
+        item_id: json['item_id'] as int
       );
     }
 }

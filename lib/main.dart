@@ -76,7 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   onChanged : (value) {
                       phone = value;
-                      print(phone);
                   },
                 ),
               ),
@@ -84,6 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text('Войти', style: TextStyle(fontSize: 20),),
                 onPressed: (){
                   setState(() {
+                    print('zzzzzz');
                     future_res = sendVerifyCodeResponse(phone, context);
                   });
                 },
@@ -159,11 +159,13 @@ Validator _validatePhoneNumber(phone){
   Validator res;
   RegExp regExp =  RegExp(r"(^\+?\d{12,}$)"); // формат тел. 380501234567
   RegExp regReplace = RegExp(r"(/\D/g)");
-  phone = phone.trim().replaceAll(regReplace,"");
-  if(phone.length == 10 && phone.substring(0,1) == "0"){
+  phone = phone.trim().replaceAll(regReplace, '');
+  if(phone.length == 10 && phone.substring(0,1) == '0'){
     phone = "+38" + phone;
-  }else if(phone.length == 11 && phone.substring(0,1) == "8"){
+  }else if(phone.length == 11 && phone.substring(0,1) == '8'){
     phone = "+3" + phone;
+  }else if(phone.length == 9 && phone.substring(0,1) != '0'){
+    phone = '+380' + phone;
   }
 
   var result = regExp.hasMatch(phone) ? true : false;

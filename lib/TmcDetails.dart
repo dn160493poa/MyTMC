@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'User.dart';
 
 class TmcDetails extends StatefulWidget {
@@ -8,14 +12,14 @@ class TmcDetails extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<TmcDetails> {
+  Future<ItemDetails> details;
   int itemId;
 
   @override
   Widget build(BuildContext context) {
     final RouteSettings settings = ModalRoute.of(context).settings;
     itemId = settings.arguments;
-    print(itemId);
-    details = getItemsList(itemId); //todo
+    details = getItemsInfo(itemId);
     return Scaffold(
       appBar: AppBar(
         title: Text('Компбютер, АСУС 4 ядра, 12 ГБ оперативной памяти...'),
@@ -188,4 +192,47 @@ TextButton _sendTmc(){
       //shape: const BeveledRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(5))),
     ),
   );
+}
+
+class ItemDetails{
+  final String itemName;
+  final int inventoryId;
+  final String serialNumber;
+  final String sender;
+  final String price;
+  final int ownerId;
+
+  // ignore: sort_constructors_first
+  ItemDetails({this.itemName, this.inventoryId, this.serialNumber, this.sender, this.price, this.ownerId});
+
+  factory ItemDetails.fromJson(Map<String, dynamic> json){
+    return ItemDetails(
+        itemName: json['item_name'] as String,
+        inventoryId: json['inventory_id'] as int,
+        serialNumber: json['serial_number'] as String,
+        sender: json['sender'] as String,
+        price: json['price'] as String,
+        ownerId: json['owner_id'] as int
+    );
+  }
+}
+
+Future<ItemDetails> getItemsInfo(int itemId) async{
+  const String url = 'http://3.125.138.157:1882/getInfoe';
+  String id = itemId.toString();
+  // ignore: always_specify_types
+  final Object body = {
+    'api_key':'5361061fd3d485112da8a494b13fe39',
+    'inventory_id': '12545'
+  };
+  // ignore: always_specify_types
+  final http.Response response = await http.post(url, body: body, headers: {});
+
+  if(response.statusCode == 200){
+    print(response.body);
+    return ItemDetails.fromJson(json.decode(response.body));
+  }else{
+    throw Exception('Error: ${response.reasonPhrase}');
+  }
+
 }

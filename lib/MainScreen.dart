@@ -134,13 +134,15 @@ class Item{
     }
 }
 
-Future<ItemsList> getItemsList(userId) async{
-  const url = 'http://3.125.138.157:1882/appMyTmc/handler/getUserTmc';
-  var body = {
+Future<ItemsList> getItemsList(int userId) async{
+  const String url = 'http://3.125.138.157:1882/appMyTmc/handler/getUserTmc';
+  String user_id = userId.toString();
+  // ignore: always_specify_types
+  final Object body = {
     'api_key':'5361061fd3d485112da8a494b13fe39',
-    'user_id': '52'
+    'user_id': user_id
   };
-  final response = await http.post(url, body: body, headers: {});
+  final http.Response response = await http.post(url, body: body, headers: {});
 
   if(response.statusCode == 200){
     print(response.body);

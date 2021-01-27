@@ -142,11 +142,9 @@ class _MyHomePageState extends State<VerifyCode> {
 Future<Response> verifyCode(sms_code, auth_ref, context) async {
   const url = 'http://3.125.138.157:1882/appMyTmc/handler/verifCode';
   final String api_key = '5361061fd3d485112da8a494b13fe39';
-  int code = int.parse(sms_code);
-  print(code);
-  var body = {
+  final Object body = {
     "api_key": api_key,
-    "code": code.toString(),
+    "code": sms_code,
     "ref": auth_ref
   };
 

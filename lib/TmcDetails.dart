@@ -24,18 +24,31 @@ class _MyHomePageState extends State<TmcDetails> {
       appBar: AppBar(
         title: Text('Компбютер, АСУС 4 ядра, 12 ГБ оперативной памяти...'),
       ),
-      body: _buildBody(),
+      body: FutureBuilder<ItemDetails>(
+        future: details,
+        builder: (BuildContext context, AsyncSnapshot<ItemDetails> snapshot) {
+          if (snapshot.hasData) {
+            print(snapshot.data);
+            return _buildBody(snapshot.data);  // Пример snapshot.data.itemName получаем данные через точечку
+          } else if(snapshot.hasError){
+            return Text('Error');
+          }else{
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+      //
     );
   }
 }
 
-Widget _buildBody(){
+Widget _buildBody(details){
   return SingleChildScrollView(
     child: Column(
       children: [
         _headerImage(),
         Divider(),
-        _itemDetails(),
+        _itemDetails(details),
         _sendTmc(),
       ],
     ),
@@ -49,7 +62,7 @@ Image _headerImage(){
   );
 }
 
-Container _itemDetails(){
+Container _itemDetails(details){
   return Container(
     padding: EdgeInsets.only(left: 20),
     child: Column(
@@ -67,7 +80,7 @@ Container _itemDetails(){
                       color: Colors.black54),
                   textAlign: TextAlign.left,
                 ),
-                Text('Компьютер АСУС',
+                Text('${details.itemName}',
                   style: TextStyle(
                     fontSize: 20,
                   ),
@@ -115,7 +128,7 @@ Container _itemDetails(){
                       color: Colors.black54),
                   textAlign: TextAlign.left,
                 ),
-                Text('ЕР3234234242231231122',
+                Text('${details.serialNumber}',
                   style: TextStyle(
                     fontSize: 20,
                   ),
@@ -139,7 +152,7 @@ Container _itemDetails(){
                       color: Colors.black54),
                   textAlign: TextAlign.left,
                 ),
-                Text('Брось С.А.',
+                Text('${details.sender}',
                   style: TextStyle(
                     fontSize: 20,
                   ),
@@ -163,7 +176,7 @@ Container _itemDetails(){
                       color: Colors.black54),
                   textAlign: TextAlign.left,
                 ),
-                Text('2000.00 грн',
+                Text('${details.price}',
                   style: TextStyle(
                     fontSize: 20,
                   ),
@@ -196,19 +209,17 @@ TextButton _sendTmc(){
 
 class ItemDetails{
   final String itemName;
-  final int inventoryId;
   final String serialNumber;
   final String sender;
   final String price;
   final int ownerId;
 
   // ignore: sort_constructors_first
-  ItemDetails({this.itemName, this.inventoryId, this.serialNumber, this.sender, this.price, this.ownerId});
+  ItemDetails({this.itemName, this.serialNumber, this.sender, this.price, this.ownerId});
 
   factory ItemDetails.fromJson(Map<String, dynamic> json){
     return ItemDetails(
         itemName: json['item_name'] as String,
-        inventoryId: json['inventory_id'] as int,
         serialNumber: json['serial_number'] as String,
         sender: json['sender'] as String,
         price: json['price'] as String,
@@ -218,18 +229,18 @@ class ItemDetails{
 }
 
 Future<ItemDetails> getItemsInfo(int itemId) async{
-  const String url = 'http://3.125.138.157:1882/getInfoe';
-  String id = itemId.toString();
+  const String url = 'http://3.125.138.157:1882/appMyTmc/handler/getUserTmcDetails';
+  final String id = itemId.toString();
   // ignore: always_specify_types
   final Object body = {
     'api_key':'5361061fd3d485112da8a494b13fe39',
-    'inventory_id': '12545'
+    'inventory_id': id
   };
   // ignore: always_specify_types
   final http.Response response = await http.post(url, body: body, headers: {});
 
   if(response.statusCode == 200){
-    print(response.body);
+    //print(response.body);
     return ItemDetails.fromJson(json.decode(response.body));
   }else{
     throw Exception('Error: ${response.reasonPhrase}');

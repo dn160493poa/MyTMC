@@ -58,10 +58,11 @@ class _MainPageState extends State<MainScreen>{
             builder: (BuildContext context, AsyncSnapshot<ItemsList> snapshot) {
               if (snapshot.hasData) {
                 return _myListViewDynamic(snapshot.data.items);
-              } else if(snapshot.hasError){
+              }else if(snapshot.hasError){
                 return Text('Error');
+              }else {
+                return Center(child: CircularProgressIndicator());
               }
-              return Center(child: CircularProgressIndicator());
             }
         )
     );

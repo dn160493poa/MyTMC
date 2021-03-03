@@ -20,24 +20,31 @@ class _MyHomePageState extends State<TmcDetails> {
     final RouteSettings settings = ModalRoute.of(context).settings;
     itemId = settings.arguments;
     details = getItemsInfo(itemId);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Компбютер, АСУС 4 ядра, 12 ГБ оперативной памяти...'),
-      ),
-      body: FutureBuilder<ItemDetails>(
-        future: details,
-        builder: (BuildContext context, AsyncSnapshot<ItemDetails> snapshot) {
-          if (snapshot.hasData) {
-            print(snapshot.data);
-            return _buildBody(snapshot.data);  // Пример snapshot.data.itemName получаем данные через точечку
-          } else if(snapshot.hasError){
-            return Text('Error');
-          }else{
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-      //
+    return WillPopScope(
+      onWillPop: () => Navigator.popAndPushNamed(context, '/mainScreen', arguments: 52),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('Компбютер, АСУС 4 ядра, 12 ГБ оперативной памяти...'),
+            leading: new IconButton(
+              icon: new Icon(Icons.arrow_back),
+              onPressed: () => Navigator.popAndPushNamed(context, '/mainScreen', arguments: 52),
+            ),
+          ),
+          body: FutureBuilder<ItemDetails>(
+            future: details,
+            builder: (BuildContext context, AsyncSnapshot<ItemDetails> snapshot) {
+              if (snapshot.hasData) {
+                print(snapshot.data);
+                print(snapshot.data.sender);
+                return _buildBody(snapshot.data);  // Пример snapshot.data.itemName получаем данные через точечку
+              } else if(snapshot.hasError){
+                return Text('Error');
+              }else{
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ),
     );
   }
 }
@@ -240,7 +247,7 @@ Future<ItemDetails> getItemsInfo(int itemId) async{
   final http.Response response = await http.post(url, body: body, headers: {});
 
   if(response.statusCode == 200){
-    //print(response.body);
+    print(response.body);
     return ItemDetails.fromJson(json.decode(response.body));
   }else{
     throw Exception('Error: ${response.reasonPhrase}');

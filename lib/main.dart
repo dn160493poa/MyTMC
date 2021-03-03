@@ -83,7 +83,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text('Войти', style: TextStyle(fontSize: 20),),
                 onPressed: (){
                   setState(() {
-                    print('zzzzzz');
                     future_res = sendVerifyCodeResponse(phone, context);
                   });
                 },
@@ -111,7 +110,7 @@ Future<Response> sendVerifyCodeResponse(user_phone, context) async {
   final String api_key = '5361061fd3d485112da8a494b13fe39';
   Response res;
   Validator validPhone = _validatePhoneNumber(user_phone);
-  print(validPhone.phone);
+  //print(validPhone.phone);
   if(validPhone.success == true) {
     var body = {
       "api_key": api_key,

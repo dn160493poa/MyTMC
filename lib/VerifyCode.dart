@@ -4,6 +4,7 @@ import 'package:attemp_tmc/MainScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_pin_code_fields/flutter_pin_code_fields.dart';
 
 class VerifyCode extends StatefulWidget {
 
@@ -26,7 +27,7 @@ class _MyHomePageState extends State<VerifyCode> {
       //Navigator.pushNamed(context, '/startScreen');
       Navigator.popAndPushNamed(context, '/startScreen');
     }
-    print(auth_ref);
+    //print(auth_ref);
     return Scaffold(
       appBar: AppBar(
         title: Text('navbar title'),
@@ -38,100 +39,121 @@ class _MyHomePageState extends State<VerifyCode> {
             children: [
               Padding(padding: EdgeInsets.only(left: 80, right: 80, top: 25, bottom: 25),
                 child:
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      SizedBox(
-                        child:
-                          TextField(
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(1),
-                            ],
-                            textAlign: TextAlign.center,
-                            cursorColor: Color(0xff4dc7e1),
-                            keyboardType: TextInputType.phone,
-                            style: TextStyle(color: Colors.blue, fontSize: 30,),
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(color: Colors.black54, fontSize: 30, fontWeight: FontWeight.bold),
-                            ),
-                          onChanged : (value) {
-                              field1 = value;
-                              print(value);
-                          },
-                        ),
-                        width: 25,
-                      ),
-                      SizedBox(
-                        child:
-                        TextField(
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(1),
-                          ],
-                          textAlign: TextAlign.center,
-                          cursorColor: Color(0xff4dc7e1),
-                          keyboardType: TextInputType.phone,
-                          style: TextStyle(color: Colors.blue, fontSize: 30,),
-                          decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.black54, fontSize: 30, fontWeight: FontWeight.bold),
-                          ),
-                          onChanged : (value) {
-                            field2 = value;
-                          },
-                        ),
-                        width: 25,
-                      ),
-                      SizedBox(
-                        child:
-                        TextField(
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(1),
-                          ],
-                          textAlign: TextAlign.center,
-                          cursorColor: Color(0xff4dc7e1),
-                          keyboardType: TextInputType.phone,
-                          style: TextStyle(color: Colors.blue, fontSize: 30,),
-                          decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.black54, fontSize: 30, fontWeight: FontWeight.bold),
-                          ),
-                          onChanged : (value) {
-                            field3 = value;
-                          },
-                        ),
-                        width: 25,
-                      ),
-                      SizedBox(
-                        child:
-                        TextField(
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(1),
-                          ],
-                          textAlign: TextAlign.center,
-                          cursorColor: Color(0xff4dc7e1),
-                          keyboardType: TextInputType.phone,
-                          style: TextStyle(color: Colors.blue, fontSize: 30,),
-                          decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.black54, fontSize: 30, fontWeight: FontWeight.bold),
-                          ),
-                          onChanged : (value) {
-                            field4 = value;
-                            print(value);
-                          },
-                        ),
-                        width: 25,
-                      ),
-                    ],
+                PinCodeFields(
+                  length: 4,
+                  fieldBorderStyle: FieldBorderStyle.Square,
+                  fieldHeight: 50,
+                  fieldWidth: 60,
+                  activeBorderColor: Colors.indigo,
+                  borderRadius: BorderRadius.circular(8.0),
+                  keyboardType: TextInputType.number,
+                  autoHideKeyboard: false,
+                  borderColor: Colors.lightBlue,
+                  textStyle: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
                   ),
-              ),
-            RaisedButton(
-                child: Text(
-                  'Click'
+                  //fieldBorderStyle: FieldBorderStyle.TopBottom,
+                  onComplete: (output) {
+                    // Your logic with pin code
+                    verifyCode(output, auth_ref, context);
+                    //print(output);
+                  },
                 ),
-                onPressed: (){
-                  //var code = _getEnterdCode(int.parse(field1), int.parse(field2), int.parse(field3), int.parse(field4));
-                  var code = field1 + field2 + field3 + field4;
-                  verifyCode(code, auth_ref, context);
-                },
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  //   children: [
+                  //     SizedBox(
+                  //       child:
+                  //         TextField(
+                  //           inputFormatters: [
+                  //             LengthLimitingTextInputFormatter(1),
+                  //           ],
+                  //           textAlign: TextAlign.center,
+                  //           cursorColor: Color(0xff4dc7e1),
+                  //           keyboardType: TextInputType.phone,
+                  //           style: TextStyle(color: Colors.blue, fontSize: 30,),
+                  //           decoration: InputDecoration(
+                  //             hintStyle: TextStyle(color: Colors.black54, fontSize: 30, fontWeight: FontWeight.bold),
+                  //           ),
+                  //         onChanged : (value) {
+                  //             field1 = value;
+                  //             //print(value);
+                  //         },
+                  //       ),
+                  //       width: 25,
+                  //     ),
+                  //     SizedBox(
+                  //       child:
+                  //       TextField(
+                  //         inputFormatters: [
+                  //           LengthLimitingTextInputFormatter(1),
+                  //         ],
+                  //         textAlign: TextAlign.center,
+                  //         cursorColor: Color(0xff4dc7e1),
+                  //         keyboardType: TextInputType.phone,
+                  //         style: TextStyle(color: Colors.blue, fontSize: 30,),
+                  //         decoration: InputDecoration(
+                  //           hintStyle: TextStyle(color: Colors.black54, fontSize: 30, fontWeight: FontWeight.bold),
+                  //         ),
+                  //         onChanged : (value) {
+                  //           field2 = value;
+                  //         },
+                  //       ),
+                  //       width: 25,
+                  //     ),
+                  //     SizedBox(
+                  //       child:
+                  //       TextField(
+                  //         inputFormatters: [
+                  //           LengthLimitingTextInputFormatter(1),
+                  //         ],
+                  //         textAlign: TextAlign.center,
+                  //         cursorColor: Color(0xff4dc7e1),
+                  //         keyboardType: TextInputType.phone,
+                  //         style: TextStyle(color: Colors.blue, fontSize: 30,),
+                  //         decoration: InputDecoration(
+                  //           hintStyle: TextStyle(color: Colors.black54, fontSize: 30, fontWeight: FontWeight.bold),
+                  //         ),
+                  //         onChanged : (value) {
+                  //           field3 = value;
+                  //         },
+                  //       ),
+                  //       width: 25,
+                  //     ),
+                  //     SizedBox(
+                  //       child:
+                  //       TextField(
+                  //         inputFormatters: [
+                  //           LengthLimitingTextInputFormatter(1),
+                  //         ],
+                  //         textAlign: TextAlign.center,
+                  //         cursorColor: Color(0xff4dc7e1),
+                  //         keyboardType: TextInputType.phone,
+                  //         style: TextStyle(color: Colors.blue, fontSize: 30,),
+                  //         decoration: InputDecoration(
+                  //           hintStyle: TextStyle(color: Colors.black54, fontSize: 30, fontWeight: FontWeight.bold),
+                  //         ),
+                  //         onChanged : (value) {
+                  //           field4 = value;
+                  //           //print(value);
+                  //         },
+                  //       ),
+                  //       width: 25,
+                  //     ),
+                  //   ],
+                  // ),
               ),
+            // RaisedButton(
+            //     child: Text(
+            //       'Click'
+            //     ),
+            //     onPressed: (){
+            //       //var code = _getEnterdCode(int.parse(field1), int.parse(field2), int.parse(field3), int.parse(field4));
+            //       var code = field1 + field2 + field3 + field4;
+            //       verifyCode(code, auth_ref, context);
+            //     },
+            //   ),
             ],
           ),
       ), // This trailing comma makes auto-formatting nicer for build methods.

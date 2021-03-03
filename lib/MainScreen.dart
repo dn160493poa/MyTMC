@@ -146,7 +146,7 @@ Future<ItemsList> getItemsList(int userId) async{
   final http.Response response = await http.post(url, body: body, headers: {});
 
   if(response.statusCode == 200){
-    print(response.body);
+    //print(response.body);
     return ItemsList.fromJson(json.decode(response.body));
   }else{
     throw Exception('Error: ${response.reasonPhrase}');

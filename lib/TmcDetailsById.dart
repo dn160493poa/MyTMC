@@ -3,15 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'User.dart';
-
-class TmcDetails extends StatefulWidget {
+class TmcDetailsById extends StatefulWidget {
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<TmcDetails> {
+class _MyHomePageState extends State<TmcDetailsById> {
   Future<ItemDetails> details;
   int itemId;
 
@@ -21,7 +19,7 @@ class _MyHomePageState extends State<TmcDetails> {
     itemId = settings.arguments;
     details = getItemsInfo(itemId);
     return WillPopScope(
-      onWillPop: () => Navigator.popAndPushNamed(context, '/mainScreen', arguments: 52),
+      onWillPop: () => null, //() => Navigator.popAndPushNamed(context, '/mainScreen', arguments: 52),  не работает
         child: Scaffold(
           appBar: AppBar(
             title: Text('Компбютер, АСУС 4 ядра, 12 ГБ оперативной памяти...'),
@@ -35,9 +33,10 @@ class _MyHomePageState extends State<TmcDetails> {
             builder: (BuildContext context, AsyncSnapshot<ItemDetails> snapshot) {
               if (snapshot.hasData) {
                 print(snapshot.data);
-                print(snapshot.data.sender);
-                return _buildBody(snapshot.data);  // Пример snapshot.data.itemName получаем данные через точечку
-              } else if(snapshot.hasError){
+                //print(snapshot.data.inventoryId);
+                return _buildBody(snapshot.data, snapshot.data.inventoryId, context);  // Пример snapshot.data.itemName получаем данные через точечку
+              }else if(snapshot.hasError){
+                print(snapshot.error);
                 return Text('Error');
               }else{
                 return Center(child: CircularProgressIndicator());
@@ -49,14 +48,14 @@ class _MyHomePageState extends State<TmcDetails> {
   }
 }
 
-Widget _buildBody(details){
+Widget _buildBody(details, inventoryId, context){
   return SingleChildScrollView(
     child: Column(
       children: [
         _headerImage(),
         Divider(),
         _itemDetails(details),
-        _sendTmc(),
+        _sendTmc(inventoryId, context),
       ],
     ),
   );
@@ -199,14 +198,17 @@ Container _itemDetails(details){
   );
 }
 
-TextButton _sendTmc(){
+TextButton _sendTmc(inventoryId, context){
   return TextButton(
     child: Text('Передать',
       style: TextStyle(
           fontSize: 20,
           color: Colors.white),
     ),
-    onPressed: () {},
+    onPressed: () {
+      //Future<PermissionTransfer> future = transferTmc(inventoryId, context);
+      transferTmc(inventoryId, context);
+    },
     style: TextButton.styleFrom(
       backgroundColor: Color(0xff4dc7e1),
       //shape: const BeveledRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(5))),
@@ -215,6 +217,7 @@ TextButton _sendTmc(){
 }
 
 class ItemDetails{
+  final String inventoryId;
   final String itemName;
   final String serialNumber;
   final String sender;
@@ -222,15 +225,16 @@ class ItemDetails{
   final int ownerId;
 
   // ignore: sort_constructors_first
-  ItemDetails({this.itemName, this.serialNumber, this.sender, this.price, this.ownerId});
+  ItemDetails({this.itemName, this.serialNumber, this.sender, this.price, this.ownerId, this.inventoryId});
 
   factory ItemDetails.fromJson(Map<String, dynamic> json){
     return ItemDetails(
-        itemName: json['item_name'] as String,
-        serialNumber: json['serial_number'] as String,
+        inventoryId: json['inventoryId'] as String,
+        itemName: json['itemName'] as String,
+        serialNumber: json['serialNumber'] as String,
         sender: json['sender'] as String,
         price: json['price'] as String,
-        ownerId: json['owner_id'] as int
+        ownerId: json['ownerId'] as int
     );
   }
 }
@@ -247,10 +251,63 @@ Future<ItemDetails> getItemsInfo(int itemId) async{
   final http.Response response = await http.post(url, body: body, headers: {});
 
   if(response.statusCode == 200){
-    print(response.body);
+    //print(response.body);
     return ItemDetails.fromJson(json.decode(response.body));
   }else{
     throw Exception('Error: ${response.reasonPhrase}');
   }
 
+}
+
+
+Future<PermissionTransfer> transferTmc(String inventoryId, context) async{
+  const String url = 'http://3.125.138.157:1882/appMyTmc/handler/transferTmcPermission';
+  // ignore: always_specify_types
+  final Object body = {
+    'api_key':'5361061fd3d485112da8a494b13fe39',
+    'inventory_id': inventoryId
+  };
+  print(inventoryId);
+  // ignore: always_specify_types
+  final http.Response response = await http.post(url, body: body, headers: {});
+
+  if(response.statusCode == 200){
+    //print(response.body);
+    //return PermissionTransfer.fromJson(json.decode(response.body));
+    //PermissionTransfer data = PermissionTransfer.fromJson(json.decode(response.body));
+    //print(data);
+
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Готово! Теперь сотруднику принимающему ТМЦ необходимо отсканировать QR-код.'
+        ),
+        actions: [
+          FlatButton(
+            child: Text('Ок'),
+            onPressed: () => Navigator.of(context).pop(),
+          )
+        ],
+      )
+    );
+  }else{
+    throw Exception('Error: ${response.reasonPhrase}');
+  }
+
+}
+
+// ignore: camel_case_types
+class PermissionTransfer{
+  final bool result;
+
+  // ignore: sort_constructors_first
+  PermissionTransfer({this.result});
+
+  factory PermissionTransfer.fromJson(Map<String, dynamic> json){
+    return PermissionTransfer(
+        result: json['success'] as bool
+    );
+  }
 }

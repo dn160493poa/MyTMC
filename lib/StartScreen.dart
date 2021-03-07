@@ -17,7 +17,7 @@ class StartScreen extends StatefulWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('navbar title'),
+        title: Text('Мои ТМЦ'),
       ),
       body: Center(
         child: RaisedButton(

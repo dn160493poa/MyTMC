@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:attemp_tmc/QrScan.dart';
-import 'package:attemp_tmc/TmcDetails.dart';
+import 'package:attemp_tmc/TmcDetailsById.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -96,7 +96,7 @@ ListView _myListViewDynamic(items){
             trailing: Icon(Icons.keyboard_arrow_right),
             onTap: (){
               //Navigator.push(context, new MaterialPageRoute(builder: (context) => new TmcDetails()));
-              Navigator.popAndPushNamed(context, '/tmcDetails', arguments: items[index].item_id);
+              Navigator.popAndPushNamed(context, '/tmcDetailsById', arguments: items[index].item_id);
             },
           ),
         );

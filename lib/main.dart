@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:attemp_tmc/QrScan.dart';
-import 'package:attemp_tmc/TmcDetails.dart';
+import 'package:attemp_tmc/TmcDetailsById.dart';
+import 'package:attemp_tmc/TmcDetailsByQr.dart';
 import 'package:attemp_tmc/VerifyCode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         '/startScreen': (context) => StartScreen(),
         '/verifyCode': (context) => VerifyCode(),
         '/mainScreen': (context) => MainScreen(),
-        '/tmcDetails': (context) => TmcDetails(),
+        '/tmcDetailsById': (context) => TmcDetailsById(),
+        '/tmcDetailsByQr': (context) => TmcDetailsByQr(),
         '/qrScan': (context) => QrScan(),
       },
     );
@@ -127,8 +129,6 @@ Future<Response> sendVerifyCodeResponse(user_phone, context) async {
       res = Response(success: false, ref: '');
     }
   }
-
-
 
   return res;
 }

@@ -30,15 +30,15 @@ class _MyAppState extends State<QrScan> {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                width: 200,
-                height: 200,
-                child: Image.memory(bytes),
-              ),
-              Text('RESULT  $barcode'),
+              // SizedBox(
+              //   width: 200,
+              //   height: 200,
+              //   child: Image.memory(bytes),
+              // ),
 
-              RaisedButton(onPressed: _scan, child: Text("Scan")),
-              RaisedButton(onPressed: _scanPhoto, child: Text("Scan Photo")),
+              //Text('RESULT  $barcode'),
+              //RaisedButton(onPressed: _scan, child: Text("Scan")),
+              //RaisedButton(onPressed: _scanPhoto, child: Text("Scan Photo")),
             ],
           ),
         ),
@@ -49,6 +49,7 @@ class _MyAppState extends State<QrScan> {
   Future _scan() async {
     String barcode = await scanner.scan();
     setState(() => this.barcode = barcode);
+    Navigator.popAndPushNamed(context, '/tmcDetailsByQr', arguments: barcode);
   }
 
   Future _scanPhoto() async {

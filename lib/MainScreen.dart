@@ -17,6 +17,7 @@ class _MainPageState extends State<MainScreen>{
   Future<List<User>> _userDataList;
   Future<ItemsList> items;
   int userId;
+  bool hasUserId = true;
 
   @override
   void initState() {
@@ -24,6 +25,9 @@ class _MainPageState extends State<MainScreen>{
     setState(() {
       _userDataList = DBProvider.db.getUsersData();
     });
+    // if(!hasUserId){
+    //   Navigator.popAndPushNamed(context, '/main');
+    // }
   }
 
   @override
@@ -31,7 +35,12 @@ class _MainPageState extends State<MainScreen>{
     final RouteSettings settings = ModalRoute.of(context).settings;
     userId = settings.arguments;
     items = getItemsList(userId);
-    //print(_userDataList == null ? 1: 2);
+    WidgetsBinding.instance.addPostFrameCallback((_) { // _ функция?
+      if(hasUserId){
+        Navigator.popAndPushNamed(context, '/main'); //todo
+      }
+    });
+
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -60,20 +69,41 @@ class _MainPageState extends State<MainScreen>{
             ),
           ],
         ),
-        body: FutureBuilder<ItemsList>(
-            future: items,
-            builder: (BuildContext context, AsyncSnapshot<ItemsList> snapshot) {
+        body: FutureBuilder<List<User>>(
+            future: _userDataList,
+            builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
               if (snapshot.hasData) {
-                return _myListViewDynamic(snapshot.data.items);
+                if(snapshot.data.length > 0){ // true
+                  FutureBuilder<ItemsList>(
+                      future: items,
+                      builder: (BuildContext context, AsyncSnapshot<ItemsList> snapshot) {
+                        if (snapshot.hasData) {
+                          return _myListViewDynamic(snapshot.data.items);
+                        }else if(snapshot.hasError){
+                          return Text('API Get data Error');
+                        }else {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                      }
+                  );
+                }else{
+
+                  //Navigator.popAndPushNamed(context, '/main');  //todo
+                  return Center(
+                      child: CircularProgressIndicator(),
+                  );
+                }
               }else if(snapshot.hasError){
-                return Text('Error');
+                return Text('DB get data Error');
               }else {
                 return Center(child: CircularProgressIndicator());
               }
+              return Center(child: CircularProgressIndicator());
             }
-        )
+        ),
     );
   }
+
 }
 
 

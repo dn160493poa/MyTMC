@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:attemp_tmc/QrScan.dart';
 import 'package:attemp_tmc/TmcDetailsById.dart';
+import 'package:attemp_tmc/User.dart';
+import 'package:attemp_tmc/db/database.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -12,12 +14,16 @@ class MainScreen extends StatefulWidget{
 }
 
 class _MainPageState extends State<MainScreen>{
+  Future<List<User>> _userDataList;
   Future<ItemsList> items;
   int userId;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _userDataList = DBProvider.db.getUsersData();
+    });
   }
 
   @override
@@ -25,6 +31,7 @@ class _MainPageState extends State<MainScreen>{
     final RouteSettings settings = ModalRoute.of(context).settings;
     userId = settings.arguments;
     items = getItemsList(userId);
+    //print(_userDataList == null ? 1: 2);
     return Scaffold(
         appBar: AppBar(
           title: Text(

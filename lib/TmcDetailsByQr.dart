@@ -153,7 +153,7 @@ Container _itemDetails(details){
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Получен от сотрудника',
+                Text('Владелец',
                   style: TextStyle(
                       fontSize: 15,
                       color: Colors.black54),
